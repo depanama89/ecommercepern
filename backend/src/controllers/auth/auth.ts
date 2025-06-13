@@ -10,10 +10,10 @@ export const signUp: RequestHandler<
   signupProps,
   unknown
 > = async (req, res, next) => {
-  const { nom, prenom, email, adresse, phone, password, country } = req.body;
+  const { firstname, lastname, email, phone, password, country } = req.body;
 
   try {
-    if (!(nom || prenom || email || adresse || phone || password || country)) {
+    if (!(lastname|| firstname|| email  || phone || password || country)) {
       throw next(createHttpError(404, "Veuillez remplir tous les champs"));
     }
 
@@ -23,11 +23,27 @@ export const signUp: RequestHandler<
     });
 
     if (userExiste.rows[0].exists) {
-      throw next(createHttpError(400,"C'est utilisateur existe déja"));
+      throw next(createHttpError(400, "C'est utilisateur existe déja"));
     }
 
-    const hashedPassword=await hashPassword({password})
+    const hashedPassword = await hashPassword({ password });
+    const newUser = await pool.query(
+      `INSERT INTO tblusers(email,lastname,firstname,phone,password,country) VALUES($1,$2,$3,$4,$5,$6) RETURNING id,email,lastname,firstname,phone,password,country`,
+      [
+        email,
+        lastname,
+        firstname,
+        phone,
+        hashedPassword,
+        country,
+
+      ]
+    );
+
+    res.status(201).json(newUser.rows[0])
   } catch (error) {
+    console.log(error);
+    
     next(error);
   }
 };

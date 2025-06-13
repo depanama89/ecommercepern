@@ -1,9 +1,8 @@
 export interface signupProps{
     id:number,
-    nom:string;
-    prenom:string;
+    firstname:string;
+    lastname:string;
     email:string;
-    adresse:string;
     phone:string;
     password:string;
     country:string
