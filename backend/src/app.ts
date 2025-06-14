@@ -5,6 +5,9 @@ import morgan from "morgan";
 import createHttpError, { isHttpError } from "http-errors";
 // import { isHttpErrors } from "http-errors"
 import authRouter from "./routers/auth/routeAuth"
+import productRouter from "./routers/produit/routeProduit"
+
+
 const app = express();
 
 app.use(express.json());
@@ -16,6 +19,7 @@ app.use(morgan("dev"));
 
 app.use(express.urlencoded({ extended: true }));
 app.use("/api-v1/auth",authRouter)
+app.use("/api-v1/products",productRouter)
 
 // route de test
 app.get('/',(req,res)=>{
