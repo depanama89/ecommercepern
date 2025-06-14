@@ -1,5 +1,6 @@
 import bcrypt from "bcrypt"
-
+import JWT from "jsonwebtoken"
+import env from "../../utils/validateEnv"
 interface HashedPassword{
     password:string
 }
@@ -40,4 +41,16 @@ export const comparePassword=async({userPassword,password}:ComparedPassword)=>{
         throw new Error("Le mot de passe ne sont pas identique")
     }
 
+}
+
+interface createProps{
+    id:string
+}
+
+export const createJwt=({id}:createProps)=>{
+    return JWT.sign({
+        userId:id
+    },env.JWT_SECRET,{
+        expiresIn:"1d"
+    })
 }

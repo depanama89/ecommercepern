@@ -7,3 +7,16 @@ export interface signupProps{
     password:string;
     country:string
 }
+
+export interface LoginProps{
+    email:string,
+    password:string
+}
+
+export interface productProps{
+    id:number
+    label:string
+    description:string
+    pu:string
+    qte:number
+}

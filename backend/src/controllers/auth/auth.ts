@@ -1,8 +1,8 @@
 import { RequestHandler } from "express";
-import { signupProps } from "../../utils/allInterfaces";
+import { LoginProps, signupProps } from "../../utils/allInterfaces";
 import createHttpError from "http-errors";
 import { pool } from "../../db/db";
-import { hashPassword } from "../../services/middlewares/passwordhash";
+import { comparePassword, createJwt, hashPassword } from "../../services/middlewares/passwordhash";
 
 export const signUp: RequestHandler<
   unknown,
@@ -48,8 +48,53 @@ export const signUp: RequestHandler<
   }
 };
 
-export const login: RequestHandler = async (req, res, next) => {
-  res.status(200).send("methode effectuer");
+export const login: RequestHandler<unknown,unknown,LoginProps,unknown> = async (req, res, next) => {
+ 
+    const {email,password}=req.body
+    try {
+        if(!(email||password)){
+            throw createHttpError(400,"Email and password sont obligatoire")
+        }
+
+        const result=await pool.query({
+            text:`SELECT*FROM tblusers WHERE email=$1`,
+            values:[email]
+        })
+        const user=result.rows[0]
+
+        if(!user){
+            throw createHttpError(404,"email et mot de passe sont incorrects")
+        }
+
+        const isMatch = await comparePassword({
+            userPassword:user.password,
+            password:password
+        })
+        
+        if(!isMatch){
+            throw createHttpError(401,"mot de passe ne correspond pas")
+        }
+
+        const token=createJwt({id:user.id})
+
+
+        res.cookie('token',token,{
+           httpOnly:true,
+           secure:true,
+           sameSite:'strict',
+           maxAge:86400*1000
+            
+        })
+
+        user.password=undefined
+        res.status(200).json({
+            message:"login successfully",
+            user,token
+        })
+    } catch (error) {
+      console.log(error);
+        
+    }
 };
 
 export const usersDelete: RequestHandler = async (req, res, next) => {
