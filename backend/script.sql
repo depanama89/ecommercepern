@@ -20,7 +20,7 @@ CREATE TABLE tblroles(
 -- 	user_id INTEGER NOT NULL REFERENCES tblusers(id),
 -- 	role_id INTEGER NOT NULL REFERENCES tblroles(id) 
 -- );
-ALTER TABLE tbluser_roles RENAME COLUMN role_iid TO role_id;
+-- ALTER TABLE tbluser_roles RENAME COLUMN role_iid TO role_id;
 -- user_id INTEGER NOT NULL REFERENCES tbluser(id),
 CREATE TABLE tblproduits (
 	id SERIAL NOT NULL PRIMARY KEY,
@@ -41,14 +41,23 @@ CREATE TABLE tblcommandes(
 );
 
 
-CREATE TABLE tblproduit_commandes(
-	id SERIAL NOT NULL PRIMARY KEY,
-	produit_id INTEGER NOT NULL REFERENCES tblproduits(id),
-	commande_id INTEGER NOT NULL REFERENCES tblcommandes(id),
-	qte_cmd INTEGER NOT NULL,
-	createdAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-	updatedAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+-- CREATE TABLE tblproduit_commandes(
+-- 	id SERIAL NOT NULL PRIMARY KEY,
+-- 	produit_id INTEGER NOT NULL REFERENCES tblproduits(id),
+-- 	commande_id INTEGER NOT NULL REFERENCES tblcommandes(id),
+-- 	qte_cmd INTEGER NOT NULL,
+-- 	createdAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+-- 	updatedAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 
+-- );
+CREATE TABLE tblproduit_commandes (
+    id SERIAL PRIMARY KEY,
+    commande_id INTEGER REFERENCES tblcommandes(id) ON DELETE CASCADE,
+    produit_id INTEGER REFERENCES tblproduits(id),
+    quantite INTEGER NOT NULL,
+    prix_unitaire DECIMAL(10, 2) NOT NULL,
+    -- Contrainte pour s'assurer que la quantité est positive
+    CONSTRAINT chk_details_commande_quantite CHECK (quantite > 0)
 );
 
 CREATE TABLE tblexpeditions (id SERIAL NOT NULL PRIMARY KEY,

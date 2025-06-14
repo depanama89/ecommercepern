@@ -6,6 +6,7 @@ import createHttpError, { isHttpError } from "http-errors";
 // import { isHttpErrors } from "http-errors"
 import authRouter from "./routers/auth/routeAuth"
 import productRouter from "./routers/produit/routeProduit"
+import commandeRouter from "./routers/commande/routeCommande"
 
 
 const app = express();
@@ -20,6 +21,7 @@ app.use(morgan("dev"));
 app.use(express.urlencoded({ extended: true }));
 app.use("/api-v1/auth",authRouter)
 app.use("/api-v1/products",productRouter)
+app.use("/api-v1/commandes",commandeRouter)
 
 // route de test
 app.get('/',(req,res)=>{
